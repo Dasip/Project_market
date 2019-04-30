@@ -18,7 +18,7 @@ class NewsModel():
         cursor.close()
         self.conn.commit()
         
-    def insert(self, title, pict_name, content, user_id):
+    def insert(self, title, content, picture, user_id):
         cursor = self.conn.cursor()
         cursor.execute('''SELECT * FROM news WHERE title = ?''', (title,))   
         row = cursor.fetchone()
@@ -26,7 +26,7 @@ class NewsModel():
         if not row:
             cursor.execute('''INSERT INTO news 
                               (title, content, picture, user_id, time) 
-                              VALUES (?,?,?, DATETIME())''', (title, content, pict_name,
+                              VALUES (?,?,?,?, DATETIME())''', (title, content, picture,
                                                               str(user_id)))
             a = [True, '']
         cursor.close()

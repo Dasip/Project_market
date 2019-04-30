@@ -5,6 +5,7 @@ from LoginForm import LoginForm
 from NewsModel import NewsModel
 from UsersModel import UsersModel
 from AddUser import RegistrationForm
+from werkzeug import secure_filename
 import os
 
 app = Flask(__name__)
@@ -59,24 +60,28 @@ def add_news(comment=''):
         title = form.title.data
         content = form.content.data
         picture = form.picture.data
+        
         nm = NewsModel(db.get_connection())
-        print(picture)
         a = nm.insert(title, content, picture.filename, session['username'])
+        
         if a[0]:
+            
+            file = picture
+            filename = secure_filename(file.filename)
             
             if not os.path.exists('static/users/{}'.format(session['username'])):
                 os.chdir('static/users')
                 os.mkdir(session['username'])
                 os.chdir(session['username'])
-                os.mkdir(title) 
-                file.save(picture)
                 
             else:
                 os.chdir('static/users/{}'.format(session['username']))
-                os.mkdir(title)
-                file.save(picture)
                 
-            os.chdir('../../..')
+            os.mkdir(title) 
+            os.chdir(title)   
+            file.save(filename)
+                
+            os.chdir('../../../..')
             return redirect("/index")
         else:
             return render_template('add_news.html', title='Добавление новости',
