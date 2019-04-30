@@ -54,20 +54,24 @@ def add_news(comment=''):
     form = AddNewsForm()
     
     path = os.getcwd()
-    
+    print(path)
     if form.validate_on_submit():
         
         title = form.title.data
         content = form.content.data
         picture = form.picture.data
+        game = form.game.data
         
         nm = NewsModel(db.get_connection())
-        a = nm.insert(title, content, picture.filename, session['username'])
+        a = nm.insert(title, content, picture.filename, game.filename, session['username'])
         
         if a[0]:
             
             file = picture
             filename = secure_filename(file.filename)
+            
+            game_file = game
+            game_name = secure_filename(game.filename)
             
             if not os.path.exists('static/users/{}'.format(session['username'])):
                 os.chdir('static/users')
@@ -80,6 +84,7 @@ def add_news(comment=''):
             os.mkdir(title) 
             os.chdir(title)   
             file.save(filename)
+            game_file.save(game_name)
                 
             os.chdir('../../../..')
             return redirect("/index")
@@ -96,7 +101,9 @@ def delete_news(news_id):
     if 'username' not in session:
         return redirect('/login')
     nm = NewsModel(db.get_connection())
-    nm.delete(news_id)
+    
+    a = nm.delete(news_id)
+    
     return redirect("/index")
 
 

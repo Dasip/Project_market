@@ -7,6 +7,7 @@ class AddNewsForm(FlaskForm):
     title = StringField('Заголовок новости', validators=[DataRequired()])
     content = TextAreaField('Текст новости', validators=[DataRequired()])
     picture = FileField('Выберете файл', validators=[FileRequired()])
+    game = FileField('Выберете файл проекта', validators=[FileRequired()])
     submit = SubmitField('Добавить')
     
     

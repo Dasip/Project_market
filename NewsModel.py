@@ -12,21 +12,22 @@ class NewsModel():
                              title VARCHAR(100),
                              content VARCHAR(1000),
                              picture VARCHAR(1000),
+                             game VARCHAR(1000),
                              user_id INTEGER,
                              time DATETIME
                              )''')
         cursor.close()
         self.conn.commit()
         
-    def insert(self, title, content, picture, user_id):
+    def insert(self, title, content, picture, game, user_id):
         cursor = self.conn.cursor()
         cursor.execute('''SELECT * FROM news WHERE title = ?''', (title,))   
         row = cursor.fetchone()
         a = [False, 'Проект с таким именем уже существует']
         if not row:
             cursor.execute('''INSERT INTO news 
-                              (title, content, picture, user_id, time) 
-                              VALUES (?,?,?,?, DATETIME())''', (title, content, picture,
+                              (title, content, picture, game, user_id, time) 
+                              VALUES (?,?,?,?,?, DATETIME())''', (title, content, picture, game,
                                                               str(user_id)))
             a = [True, '']
         cursor.close()
@@ -51,9 +52,12 @@ class NewsModel():
     
     def delete(self, news_id):
         cursor = self.conn.cursor()
+        cursor.execute('''SELECT * FROM news WHERE id = ?''', (str(news_id),))
+        a = cursor.fetchone()
         cursor.execute('''DELETE FROM news WHERE id = ?''', (str(news_id),))
         cursor.close()
         self.conn.commit()
+        return a
         
     def stats(self, user_id):
         cursor = self.conn.cursor()
